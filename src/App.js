@@ -88,17 +88,57 @@ function Form({Ajoutproduit}) {
 
 //Liste de produits
 function PackingList({objet , btnSupprimer , CaseCoche}) {
+  const [TrierPar, setTrierPar] = useState("Trier");
+  let trierproduit;
+
+  if (TrierPar === "Trier") trierproduit = objet;
+
+  // TRIER + ANCIEN au RECENT
+  if (TrierPar === "PlusAncien") {
+    trierproduit = objet.slice().sort((a, b) => a.id - b.id); 
+  }
+
+  //TRIER par ordre ALPHABETIQUE
+  if (TrierPar === "PlusRecent") {
+    trierproduit = objet.slice().sort((a, b) => b.id - a.id); 
+  }
+
+  //TRIER PAR EMBALLER
+  if (TrierPar === "StatutEmballage")
+    trierproduit = objet.slice().sort((a,b) => Number(a.packed) - Number(b.packed));
+
   return ( 
     <div className="list">
         <ul> 
-          {objet.map((item) => (
+          {trierproduit.map((item) => (
             //Item nom du composant,item nom de l'accessoire(props), item qui est objet
             <Item item={item} btnSupprimer={btnSupprimer} CaseCoche={CaseCoche} />
           ))}
         </ul>
+
+          <div className="actions">
+            <select value={TrierPar} onChange={(e)=> setTrierPar (e.target.value)}>
+              <option value={"PlusAncien"}>Trier selon l'ordre d'ajout le plus ancien</option>
+              <option value={"PlusRecent"}>Trier selon l'ordre d'ajout le plus récent</option>
+              <option value={"StatutEmballage"}>Trier par statut d'emballage</option>
+            </select>
+          </div>
+
+
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
 
 //chaque produit
   function Item({ item  , btnSupprimer , CaseCoche}) {
@@ -122,7 +162,7 @@ function Stats({objet }) {
   if (!objet.length)
     return (
         <span className="stats">
-          <em> Commencer à préparer vos affaires ! 👜 </em>
+          <em> 🌞 Commencer à préparer vos affaires ! 👜 </em>
         </span>
     )
 
@@ -136,8 +176,8 @@ function Stats({objet }) {
   return (
       <footer className="stats">
         <span style={{display:"flex",justifyContent:"center",width:"100%"}}>  
-          👝 Tu as {SommeItem} dans ta liste {SommeItem > 1 ? "produits " : "produit "} 
-          et {nbxobjet} types dont {nbxobjetemballé} emballé ({pourcentageemballe} %)
+          👝 Tu as {SommeItem} {SommeItem > 1 ? "produits " : "produit "} 
+          de {nbxobjet} types dont {nbxobjetemballé} emballé ({pourcentageemballe} %)
         </span>
       </footer>
   )
